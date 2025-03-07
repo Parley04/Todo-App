@@ -13,10 +13,8 @@ namespace Todo_App.Application.Tags.Queries.GetUnchosenTags
 
         public class GetUnchosenTagsQueryHandler : IRequestHandler<GetUnchosenTagsQuery, List<Tag>>
         {
-
             private readonly IApplicationDbContext _context;
             private readonly IMapper _mapper;
-
             public GetUnchosenTagsQueryHandler(IApplicationDbContext context, IMapper mapper)
             {
                 _context = context;

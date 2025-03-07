@@ -149,7 +149,8 @@
           <label for="">Tag Name</label>
           <input type="text" class="form-control" name="txtTagName" [(ngModel)]="tag.name" #txtTagName="ngModel"
             aria-describedby="txtTagName-help" required (input)="filterMyTags()">
-          <small *ngIf="txtTagName.invalid && (txtTagName.dirty || txtTagName.touched)" id="txtTagName-help" class="p-error">Tag
+          <small *ngIf="txtTagName.invalid && (txtTagName.dirty || txtTagName.touched)" id="txtTagName-help"
+            class="p-error">Tag
             Name
             is required</small>
         </div>
@@ -159,9 +160,13 @@
       </div>
     </div>
     <div>
-      <span *ngFor="let tag of displayedMyTags">
-        <span class="pill-success">{{tag.name}}</span>
-      </span>
+      <div class="tag-grid">
+        <span *ngFor="let tag of displayedMyTags">
+          <div class="card-body">
+            <span class="pill-success">{{tag.name}}</span>
+          </div>
+        </span>
+      </div>
     </div>
   </div>
   <div class="modal-footer clearfix">
@@ -219,22 +224,22 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="itemDetailsFormGroup" class="form">
+    <form #itemDetailsForm="ngForm">
       <div class="form-group">
         <label for="list">List</label>
-        <select class="form-control" formControlName="listId">
-          <option [ngValue]="list.id" *ngFor="let list of lists">{{ list.title }}</option>
+        <select class="form-control" [(ngModel)]="selectedItem.listId" name="listId">
+          <option [value]="list.id" *ngFor="let list of lists">{{ list.title }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="priority">Priority</label>
-        <select class="form-control" formControlName="priority">
-          <option [ngValue]="level.value" *ngFor="let level of priorityLevels">{{ level.name }}</option>
+        <select class="form-control" [(ngModel)]="selectedItem.priority" name="priority">
+          <option [value]="level.value" *ngFor="let level of priorityLevels">{{ level.name }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="note">Note</label>
-        <textarea id="note" class="form-control" rows="3" formControlName="note"></textarea>
+        <textarea id="note" class="form-control" rows="3" [(ngModel)]="selectedItem.note" name="note"></textarea>
       </div>
     </form>
     <hr>
@@ -254,13 +259,16 @@
       </div>
       <div>
         Sugested Tags
-        <div class="mt-2">
-          <span *ngFor="let tag of displayedTags">
-            <span class="pill-success" style="cursor: pointer;" title="Add" (click)="saveItemTag(tag.id)">
-              {{tag.name}}
-            </span>
+        <div class="tag-grid">
+          <span *ngFor="let tag of displayedTags" class="tag-item">
+            <div class="card-body">
+              <span class="pill-success" style="cursor: pointer;" title="Add" (click)="saveItemTag(tag.id)">
+                {{ tag.name }}
+              </span>
+            </div>
           </span>
         </div>
+
       </div>
     </div>
     <div *ngIf="debug">

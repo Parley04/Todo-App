@@ -36,3 +36,16 @@
 .modal-footer {
   display: block;
 }
+
+.tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; 
+  max-height: 200px; 
+  overflow-y: auto;
+}
+
+.tag-item {
+  flex: 1 1 30%; 
+  min-width: 100px; 
+}

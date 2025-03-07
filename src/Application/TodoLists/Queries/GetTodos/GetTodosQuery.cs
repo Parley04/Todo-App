@@ -43,9 +43,10 @@ public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
             {
                 Id = item.Id,
                 Title = item.Title,
+                ListId=item.ListId,
                 Done = item.Done,
                 Note = item.Note,
-                //Priority=item.Priority,
+                Priority = (int)item.Priority,
                 ItemTags = item.ItemTags.Where(it => it.Tag != null 
                 && it.Tag.UserId == request.UserId 
                 && it.IsActive 

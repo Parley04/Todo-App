@@ -11,6 +11,7 @@ import {
   Tag,
   ItemTagsClient,
   ItemTag,
+  TodoItem,
 } from '../web-api-client';
 import { ColourDto } from './todo-list/models/colours';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
@@ -182,6 +183,7 @@ export class TodoComponent implements OnInit {
   }
 
   updateListOptions() {
+    
     const list = this.listOptionsEditor as UpdateTodoListCommand;
     // if (list.colour) {
     //   list.colour = Colour.fromJS({ code: list.colour }).toJSON();
@@ -213,10 +215,11 @@ export class TodoComponent implements OnInit {
     );
   }
 
-  // Items
+  todoItem:TodoItem=new TodoItem();
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
     this.getUnchosenTagList(item);
 
+    this.selectedItemTagId=item.id;
     this.selectedItem = item;
     this.itemDetailsFormGroup.patchValue(this.selectedItem);
 
@@ -235,28 +238,33 @@ export class TodoComponent implements OnInit {
   }
 
   updateItemDetails(): void {
-    const item = new UpdateTodoItemDetailCommand(this.itemDetailsFormGroup.value);
+    const item = new UpdateTodoItemDetailCommand({
+      id: this.selectedItem.id,
+      listId: this.selectedItem.listId,
+      priority: this.selectedItem.priority,
+      note: this.selectedItem.note
+    });
+
     this.itemsClient.updateItemDetails(this.selectedItem.id, item).subscribe(
       () => {
+        // Eğer liste değiştiyse, item'ı eski listeden çıkar, yeni listeye ekle
         if (this.selectedItem.listId !== item.listId) {
-          this.selectedList.items = this.selectedList.items.filter(
-            i => i.id !== this.selectedItem.id
-          );
-          const listIndex = this.lists.findIndex(
-            l => l.id === item.listId
-          );
+          this.selectedList.items = this.selectedList.items.filter(i => i.id !== this.selectedItem.id);
+          const listIndex = this.lists.findIndex(l => l.id === item.listId);
           this.selectedItem.listId = item.listId;
           this.lists[listIndex].items.push(this.selectedItem);
         }
-
+        // Yeni değerleri ata
         this.selectedItem.priority = item.priority;
         this.selectedItem.note = item.note;
+        this.getAll();
+        // Modal'ı kapat
         this.itemDetailsModalRef.hide();
-        this.itemDetailsFormGroup.reset();
       },
       error => console.error(error)
     );
   }
+  
   saveTag() {
     this.tag.created = new Date();
     this.tag.userId = this.userId;
@@ -266,14 +274,6 @@ export class TodoComponent implements OnInit {
       this.saveItemTag(res);
     })
   }
-
-
-
-
-
-
-
-
 
   saveItemTag(tagId: number) {
     this.itemTag.tagId = tagId;
@@ -296,7 +296,7 @@ export class TodoComponent implements OnInit {
     if (query) {
       this.displayedTags = this.unchosenTags.filter(tag => tag.name.toLowerCase().includes(query));
     } else {
-      this.displayedTags = [...this.unchosenTags]; // Reset to show all tags when the input is empty
+      this.displayedTags = [...this.unchosenTags]; 
     }
   }
   filterMyTags() {
@@ -321,11 +321,17 @@ export class TodoComponent implements OnInit {
     this.editItem(item, 'itemTitle' + index);
   }
 
-  editItem(item: TodoItemDto, inputId: string): void {
-    this.selectedItemTagId = item.id;
-    setTimeout(() => document.getElementById(inputId).focus(), 100);
+  editItem(item: any, elementId: string): void {
+    this.selectedItem = item; // Önce seçili öğeyi güncelle
+  
+    setTimeout(() => {
+      const inputElement = document.getElementById(elementId) as HTMLInputElement;
+      if (inputElement) {
+        inputElement.focus(); // Eğer element bulunduysa focus ver
+      }
+    }, 0); // Bir sonraki event loop'ta çalışmasını sağla
   }
-
+  
   updateItem(item: TodoItemDto, pressedEnter: boolean = false): void {
     const isNewItem = item.id === 0;
 
