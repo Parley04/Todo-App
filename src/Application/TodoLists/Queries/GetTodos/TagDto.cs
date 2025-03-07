@@ -6,6 +6,7 @@ namespace Todo_App.Application.TodoLists.Queries.GetTodos
 {
     public class TagDto : IMapFrom<Tag>
     {
+        public int Id { get; set; }
         public string? Name { get; set; }
         public string? UserId { get; set; }
         public int CountUses { get; set; }

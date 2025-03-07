@@ -26,9 +26,10 @@ namespace Todo_App.Application.Tags.Queries.GetUnchosenTags
             public async Task<List<Tag>> Handle(GetUnchosenTagsQuery request, CancellationToken cancellationToken)
             {
                 var unchosenTags = await _context.Tags
-                    .Where(tag => tag.UserId == request.UserId) // UserId eşleşmeli
+                    .Where(tag => tag.UserId == request.UserId && tag.IsActive)
                     .Where(tag => !_context.ItemTags
-                        .Any(it => it.TagId == tag.Id && it.TodoItemId == request.TodoItemId)) // TagId veya TodoItemId eşleşmemeli
+                        .Any(it => it.TagId == tag.Id && it.TodoItemId == request.TodoItemId && it.IsActive))
+                    .OrderByDescending(t=>t.CountUses)
                     .ToListAsync(cancellationToken);
 
                 return unchosenTags;

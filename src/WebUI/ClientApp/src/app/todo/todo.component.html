@@ -14,8 +14,11 @@
           <i class="bi bi-journal-plus"></i>
         </button>
       </div>
+      <input type="text" class="form-control" [(ngModel)]="filterTextList" [ngModelOptions]="{standalone:true}"
+        placeholder="Search...">
+
       <ul class="list-group">
-        <li *ngFor="let list of lists; index as i" class="list-group-item"
+        <li *ngFor="let list of lists |todopipe:filterTextList index as i" class="list-group-item"
           [ngClass]="{ 'active': selectedList == list }" (click)="selectedList = list">
           <div class="clearfix">
             <div class="float-start">
@@ -28,16 +31,30 @@
         </li>
       </ul>
     </div>
-    <div class="col-sm-8" [ngStyle]="{ 'background-color': selectedList.colour }" *ngIf="selectedList">
+    <div class="col-sm-8" [ngStyle]="{ 'background-color': selectedList.colour }" style="padding-top: 20px;"
+      *ngIf="selectedList">
       <div class="clearfix">
-        <h2 class="float-start">{{ selectedList.title }}</h2>
-        <button id="listOptions" class="btn btn-default float-end" title="List Options..."
-          (click)="showListOptionsModal(listOptionsModalTemplate)">
-          <i class="bi bi-three-dots-vertical"></i>
-        </button>
+        <div class="row">
+          <div class="col-5">
+            <h2 class="float-start">{{ selectedList.title }}</h2>
+          </div>
+          <div class="col-6">
+            <input type="text" class="form-control" [(ngModel)]="filterText" [ngModelOptions]="{standalone:true}"
+              placeholder="Search...">
+          </div>
+          <div class="col-1">
+            <button id="listOptions" class="btn btn-default" title="List Options..."
+              (click)="showListOptionsModal(listOptionsModalTemplate)">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+          </div>
+        </div>
+
+
+
       </div>
       <ul id="todo-items" class="list-group mb-2">
-        <li *ngFor="let item of selectedList.items; index as i" class="list-group-item">
+        <li *ngFor="let item of selectedList.items | todopipe:filterText;  index as i" class="list-group-item">
           <div class="row">
             <div class="col-7">
               <div class="d-flex">
@@ -56,15 +73,22 @@
               </div>
             </div>
             <div class="col-4 mt-1">
+
+
+
               <span *ngIf="item.itemTags?.length > 0">
-                <span class="pill-primary">
-                  {{ item.itemTags[0]?.tags?.[0]?.name }}
-                </span>
-                <span *ngIf="item.itemTags.length > 1" class="pill-primary">
-                  +{{ item.itemTags.length - 1 }} more
+                <ng-container *ngFor="let tag of item.itemTags.slice(0, 2); let i = index">
+                  <span class="pill-primary" style="cursor:pointer;"
+                    (click)="choseItemTag(deleteItemTagModalTemplate, tag)">
+                    {{ tag?.tags?.[0]?.name }}
+                  </span>
+                </ng-container>
+                <span style="cursor: pointer;" *ngIf="item.itemTags.length > 2"
+                  (click)="openTagList(tagListModalTemplate, item.id)" class="pill-primary">
+                  +{{ item.itemTags.length - 2 }} more
                 </span>
               </span>
-              
+
 
             </div>
             <div class="col-1">
@@ -88,6 +112,67 @@
 <div *ngIf="debug">
   <pre>{{ lists | json }}</pre>
 </div>
+
+<ng-template #deleteItemTagModalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Remove "{{ chosenItemTag.tags[0].name }}"?</h4>
+    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="itemTagOptionsModalRef.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>All items will be permanently deleted.</p>
+    <div *ngIf="debug">
+      <pre>{{ chosenItemTag | json }}</pre>
+    </div>
+  </div>
+  <div class="modal-footer clearfix">
+    <div class="float-end">
+      <button type="button" class="btn btn-default" (click)="itemTagOptionsModalRef.hide()">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="deleteItemTag(deleteItemTagModalTemplate)">Delete</button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #tagListModalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Tag List</h4>
+    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="tagListModalRef.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-10">
+        <div class="row mb-2">
+          <label for="">Tag Name</label>
+          <input type="text" class="form-control" name="txtTagName" [(ngModel)]="tag.name" #txtTagName="ngModel"
+            aria-describedby="txtTagName-help" required (input)="filterMyTags()">
+          <small *ngIf="txtTagName.invalid && (txtTagName.dirty || txtTagName.touched)" id="txtTagName-help" class="p-error">Tag
+            Name
+            is required</small>
+        </div>
+      </div>
+      <div class="col-2 mt-4">
+        <button class="btn btn-success" (click)="saveTag()">+ </button>
+      </div>
+    </div>
+    <div>
+      <span *ngFor="let tag of displayedMyTags">
+        <span class="pill-success">{{tag.name}}</span>
+      </span>
+    </div>
+  </div>
+  <div class="modal-footer clearfix">
+    <div class="float-end">
+      <button type="button" class="btn btn-default" (click)="tagListModalRef.hide()">Cancel</button>
+    </div>
+  </div>
+</ng-template>
+
+
+
 
 <ng-template #listOptionsModalTemplate>
   <div class="modal-header">
@@ -147,12 +232,37 @@
           <option [ngValue]="level.value" *ngFor="let level of priorityLevels">{{ level.name }}</option>
         </select>
       </div>
-
       <div class="form-group">
         <label for="note">Note</label>
         <textarea id="note" class="form-control" rows="3" formControlName="note"></textarea>
       </div>
     </form>
+    <hr>
+    <div class="row">
+      <div class="col-10">
+        <div class="row mb-2">
+          <label for="">Tag Name</label>
+          <input type="text" class="form-control" name="txtName" [(ngModel)]="tag.name" #txtName="ngModel"
+            aria-describedby="txtName-help" required (input)="filterTags()">
+          <small *ngIf="txtName.invalid && (txtName.dirty || txtName.touched)" id="txtName-help" class="p-error">Tag
+            Name
+            is required</small>
+        </div>
+      </div>
+      <div class="col-2 mt-4">
+        <button class="btn btn-success" (click)="saveTag()">+ </button>
+      </div>
+      <div>
+        Sugested Tags
+        <div class="mt-2">
+          <span *ngFor="let tag of displayedTags">
+            <span class="pill-success" style="cursor: pointer;" title="Add" (click)="saveItemTag(tag.id)">
+              {{tag.name}}
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
     <div *ngIf="debug">
       <pre>{{ itemDetailsFormGroup.value | json }}</pre>
     </div>

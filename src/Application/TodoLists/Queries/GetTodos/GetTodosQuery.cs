@@ -46,9 +46,13 @@ public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
                 Done = item.Done,
                 Note = item.Note,
                 //Priority=item.Priority,
-                ItemTags = item.ItemTags.Where(it => it.Tag != null && it.Tag.UserId == request.UserId) // Filter here
+                ItemTags = item.ItemTags.Where(it => it.Tag != null 
+                && it.Tag.UserId == request.UserId 
+                && it.IsActive 
+                && it.Tag.IsActive) 
                         .Select(it => new ItemTagDto
                         {
+                        Id=it.Id,
                         TodoItemId = it.TodoItemId,
                         TagId = it.TagId,
                         Tags = it.Tag != null ? new List<TagDto>

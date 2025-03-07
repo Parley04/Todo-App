@@ -2,6 +2,7 @@
 using Todo_App.Application.Tags.Command.CreateTag;
 using Todo_App.Application.Tags.Command.Delete.DeleteTag;
 using Todo_App.Application.Tags.Command.Update.UpdateTag;
+using Todo_App.Application.Tags.Queries.GetChosenTags;
 using Todo_App.Application.Tags.Queries.GetUnchosenTags;
 using Todo_App.Domain.Entities;
 
@@ -15,6 +16,13 @@ public class TagsController : ApiControllerBase
         var result = await Mediator.Send(new GetUnchosenTagsQuery { UserId = userId, TodoItemId = todoItemId });
         return Ok(result);
     }
+    [HttpGet("ChosenTags/{userId}/{todoItemId}")]
+    public async Task<ActionResult<List<Tag>>> GetChosenTags(string userId, int todoItemId)
+    {
+        var result = await Mediator.Send(new GetChosenTagsQuery { UserId = userId, TodoItemId = todoItemId });
+        return Ok(result);
+    }
+
 
     [HttpPost]
     public async Task<ActionResult<int>> Create(CreateTagCommand command)

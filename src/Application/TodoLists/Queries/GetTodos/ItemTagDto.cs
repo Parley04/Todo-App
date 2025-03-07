@@ -9,7 +9,7 @@ namespace Todo_App.Application.TodoLists.Queries.GetTodos
         {
             Tags = new List<TagDto>();
         }
-
+        public int Id { get; set; }
         public int TodoItemId { get; set; }
         public int TagId { get; set; }
         public IList<TagDto>? Tags { get;  set; } = new List<TagDto>();
