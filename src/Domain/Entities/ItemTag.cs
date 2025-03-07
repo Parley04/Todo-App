@@ -2,7 +2,7 @@
 {
     public class ItemTag:BaseAuditableEntity
     {
-        public int ItemsId{ get; set; }
+        public int TodoItemId { get; set; }
         public TodoItem TodoItem { get; set; } 
 
         public int TagId{ get; set; }

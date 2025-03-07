@@ -7,8 +7,11 @@ import {
   CreateTodoListCommand, UpdateTodoListCommand,
   CreateTodoItemCommand, UpdateTodoItemDetailCommand,
   Colour,
+  TagsClient,
+  Tag,
 } from '../web-api-client';
 import { ColourDto } from './todo-list/models/colours';
+import { AuthorizeService } from 'src/api-authorization/authorize.service';
 
 @Component({
   selector: 'app-todo-component',
@@ -40,37 +43,46 @@ export class TodoComponent implements OnInit {
     note: ['']
   });
 
-colours: ColourDto[] = [
-  { value: "FFFFFF", name: "White" },
-  { value: "FF5733", name: "Red" },
-  { value: "FFC300", name: "Orange" },
-  { value: "FFFF66", name: "Yellow" },
-  { value: "CCFF99", name: "Green" },
-  { value: "6666FF", name: "Blue" },
-  { value: "9966CC", name: "Purple" },
-  { value: "999999", name: "Grey" },
-]
+  colours: ColourDto[] = [
+    { value: "FFFFFF", name: "White" },
+    { value: "FF5733", name: "Red" },
+    { value: "FFC300", name: "Orange" },
+    { value: "FFFF66", name: "Yellow" },
+    { value: "CCFF99", name: "Green" },
+    { value: "6666FF", name: "Blue" },
+    { value: "9966CC", name: "Purple" },
+    { value: "999999", name: "Grey" },
+  ]
 
   constructor(
     private listsClient: TodoListsClient,
+    private tagsClient:TagsClient,
+    private authService: AuthorizeService,
     private itemsClient: TodoItemsClient,
     private modalService: BsModalService,
     private fb: FormBuilder
   ) { }
 
-  ngOnInit(): void {
-    this.listsClient.get().subscribe(
-      result => {
-        this.lists = result.lists;
-        this.priorityLevels = result.priorityLevels;
-        if (this.lists.length) {
-          this.selectedList = this.lists[0];
+  userId: string;
+  unchosenTags: Tag[]=[];
 
-        }
-        console.log(result)
-      },
-      error => console.error(error)
-    );
+  ngOnInit(): void {
+    this.authService.getUser().subscribe((res: any) => {
+      this.userId = res.sub;
+      console.log(this.userId);
+
+      this.listsClient.getList(this.userId).subscribe(
+        result => {
+          this.lists = result.lists;
+          this.priorityLevels = result.priorityLevels;
+          if (this.lists.length) {
+            this.selectedList = this.lists[0];
+          }
+          console.log(result)
+        },
+        error => console.error(error)
+      );
+    })
   }
 
   // Lists
@@ -159,6 +171,12 @@ colours: ColourDto[] = [
 
   // Items
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
+    console.log(template, item);
+
+    this.tagsClient.getUnchosenTags(this.userId,item.id ).subscribe((res:any)=>{
+      this.unchosenTags=res;
+      console.log(res);
+    });
     this.selectedItem = item;
     this.itemDetailsFormGroup.patchValue(this.selectedItem);
 

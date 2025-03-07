@@ -9,7 +9,7 @@ namespace Todo_App.Application.ItemTags.Command.Update.UpdateItemTag
     public record UpdateItemTagCommand:IRequest
     {
         public int Id { get; set; }
-        public int ItemsId { get; set; }
+        public int TodoItemId { get; set; }
         public int TagId { get; set; }
     }
 
@@ -32,7 +32,7 @@ namespace Todo_App.Application.ItemTags.Command.Update.UpdateItemTag
                 throw new NotFoundException(nameof(ItemTag), request.Id);
             }
             entity.TagId=request.TagId;
-            entity.ItemsId = request.ItemsId;
+            entity.TodoItemId = request.TodoItemId;
             entity.LastModified = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);

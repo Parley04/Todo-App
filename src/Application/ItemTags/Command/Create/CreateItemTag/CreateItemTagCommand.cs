@@ -6,7 +6,7 @@ namespace Todo_App.Application.ItemTags.Command.Create.CreateItemTag
 {
     public record CreateItemTagCommand : IRequest<int>
     {
-        public int ItemsId { get; set; }
+        public int TodoItemId { get; set; }
         public int TagId { get; set; }
 
     }
@@ -23,7 +23,7 @@ namespace Todo_App.Application.ItemTags.Command.Create.CreateItemTag
         {
             var entity = new ItemTag
             {
-                ItemsId = request.ItemsId,
+                TodoItemId = request.TodoItemId,
                 TagId = request.TagId,
                 Created = DateTime.Now,
                 IsActive = true

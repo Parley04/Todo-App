@@ -12,4 +12,6 @@ public class TodoItemBriefDto : IMapFrom<TodoItem>
     public string? Title { get; set; }
 
     public bool Done { get; set; }
+    public List<ItemTag> Tags { get; set; } = new(); // Buraya Tags ekliyoruz
+
 }

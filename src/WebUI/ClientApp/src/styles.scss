@@ -23,3 +23,139 @@ code {
 
 /* Importing Bootstrap Icons SCSS file. */
 @import '../node_modules/bootstrap-icons/font/bootstrap-icons';
+
+
+.pill-success {
+  background-color: #28c76f1f;
+  border-radius: .500rem;
+  color: #28c76f;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-outline-success {
+  background-color: #28c76f;
+  border-radius: .500rem;
+  color: #ffffff;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-warning {
+  background-color: #ff9f431f;
+  border-radius: .500rem;
+  color: #ff9f43;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-outline-warning {
+  background-color: #ff9f43;
+  border-radius: .500rem;
+  color: #ffffff;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-secondary {
+  background-color: #82868b1f;
+  border-radius: .500rem;
+  color: #82868b;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-outline-secondary {
+  background-color: #82868b1f;
+  border-radius: .500rem;
+  color: #ffffff;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-primary {
+  background-color: #7367f01f;
+  border-radius: .500rem;
+  color: #7367f0;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-danger {
+  background-color: #ea54551f;
+  border-radius: .500rem;
+  color: #ea5455;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+.pill-info {
+  background-color: #00cfe81f;
+  border-radius: .500rem;
+  color: #00cfe8;
+  padding: .45em .775em;
+  // box-shadow: 4px 1px 10px #dee2de;
+  font-size: .65em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}

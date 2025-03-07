@@ -38,24 +38,42 @@
       </div>
       <ul id="todo-items" class="list-group mb-2">
         <li *ngFor="let item of selectedList.items; index as i" class="list-group-item">
-          <div class="d-flex">
-            <div class="todo-item-checkbox">
-              <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
-            </div>
-            <div class="flex-fill">
-              <input id="{{ 'itemTitle' + i }}" *ngIf="item == selectedItem" type="text"
-                class="form-control item-input-control" [(ngModel)]="item.title" (keyup.enter)="updateItem(item, true)"
-                (blur)="updateItem(item)" autofocus="autofocus" />
-              <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }"
-                (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
-                <span>{{ item.title }}</span>
+          <div class="row">
+            <div class="col-7">
+              <div class="d-flex">
+                <div class="todo-item-checkbox">
+                  <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
+                </div>
+                <div class="flex-fill">
+                  <input id="{{ 'itemTitle' + i }}" *ngIf="item == selectedItem" type="text"
+                    class="form-control item-input-control" [(ngModel)]="item.title"
+                    (keyup.enter)="updateItem(item, true)" (blur)="updateItem(item)" autofocus="autofocus" />
+                  <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }"
+                    (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
+                    <span>{{ item.title }}</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="todo-item-commands">
-              <button *ngIf="item.id != 0" (click)="showItemDetailsModal(itemDetailsModalTemplate, item)"
-                class="btn btn-default btn-xs" role="button">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
+            <div class="col-4 mt-1">
+              <span *ngIf="item.itemTags?.length > 0">
+                <span class="pill-primary">
+                  {{ item.itemTags[0]?.tags?.[0]?.name }}
+                </span>
+                <span *ngIf="item.itemTags.length > 1" class="pill-primary">
+                  +{{ item.itemTags.length - 1 }} more
+                </span>
+              </span>
+              
+
+            </div>
+            <div class="col-1">
+              <div class="todo-item-commands">
+                <button *ngIf="item.id != 0" (click)="showItemDetailsModal(itemDetailsModalTemplate, item)"
+                  class="btn btn-default btn-xs" role="button">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+              </div>
             </div>
           </div>
         </li>
@@ -64,7 +82,6 @@
         </li>
       </ul>
     </div>
-
   </div>
 </div>
 
@@ -90,7 +107,7 @@
       <select class="form-control" id="inputColour" [(ngModel)]="listOptionsEditor.colour" name="colour">
         <option [ngValue]="colour.value" *ngFor="let colour of colours">{{ colour.name }}</option>
       </select>
-      
+
     </div>
     <div *ngIf="debug">
       <pre>{{ listOptionsEditor | json }}</pre>

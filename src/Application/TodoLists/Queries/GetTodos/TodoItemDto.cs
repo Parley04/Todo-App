@@ -6,6 +6,10 @@ namespace Todo_App.Application.TodoLists.Queries.GetTodos;
 
 public class TodoItemDto : IMapFrom<TodoItem>
 {
+    public TodoItemDto()
+    {
+        ItemTags = new List<ItemTagDto>();
+    }
     public int Id { get; set; }
 
     public int ListId { get; set; }
@@ -17,6 +21,9 @@ public class TodoItemDto : IMapFrom<TodoItem>
     public int Priority { get; set; }
 
     public string? Note { get; set; }
+
+    public IList<ItemTagDto>? ItemTags { get;  set; } = new List<ItemTagDto>();
+
 
     public void Mapping(Profile profile)
     {
