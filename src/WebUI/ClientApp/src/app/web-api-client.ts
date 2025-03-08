@@ -2034,7 +2034,7 @@ export interface IPriorityLevelDto {
 export class TodoListDto implements ITodoListDto {
     id?: number;
     title?: string | undefined;
-    colour?: string | undefined;
+    colour?: Colour;
     items?: TodoItemDto[] | undefined;
 
     constructor(data?: ITodoListDto) {
@@ -2050,7 +2050,7 @@ export class TodoListDto implements ITodoListDto {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
-            this.colour = _data["colour"];
+            this.colour = _data["colour"] ? Colour.fromJS(_data["colour"]) : <any>undefined;
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -2070,7 +2070,7 @@ export class TodoListDto implements ITodoListDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
-        data["colour"] = this.colour;
+        data["colour"] = this.colour ? this.colour.toJSON() : <any>undefined;
         if (Array.isArray(this.items)) {
             data["items"] = [];
             for (let item of this.items)
@@ -2083,7 +2083,7 @@ export class TodoListDto implements ITodoListDto {
 export interface ITodoListDto {
     id?: number;
     title?: string | undefined;
-    colour?: string | undefined;
+    colour?: Colour;
     items?: TodoItemDto[] | undefined;
 }
 
@@ -2298,7 +2298,7 @@ export interface ICreateTodoListCommand {
 export class UpdateTodoListCommand implements IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
-    colour?: Colour | undefined;
+    colour?: string | undefined;
 
     constructor(data?: IUpdateTodoListCommand) {
         if (data) {
@@ -2313,7 +2313,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
-            this.colour = _data["colour"] ? Colour.fromJS(_data["colour"]) : <any>undefined;
+            this.colour = _data["colour"];
         }
     }
 
@@ -2328,7 +2328,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
-        data["colour"] = this.colour ? this.colour.toJSON() : <any>undefined;
+        data["colour"] = this.colour;
         return data;
     }
 }
@@ -2336,7 +2336,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
 export interface IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
-    colour?: Colour | undefined;
+    colour?: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {

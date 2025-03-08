@@ -59,6 +59,21 @@ public class Colour : ValueObject
     {
         return Code;
     }
+    public static Colour FromName(string name)
+    {
+        return name.ToLower() switch
+        {
+            "white" => White,
+            "red" => Red,
+            "orange" => Orange,
+            "yellow" => Yellow,
+            "green" => Green,
+            "blue" => Blue,
+            "purple" => Purple,
+            "grey" => Grey,
+            _ => throw new UnsupportedColourException(name)
+        };
+    }
 
     protected static IEnumerable<Colour> SupportedColours
     {

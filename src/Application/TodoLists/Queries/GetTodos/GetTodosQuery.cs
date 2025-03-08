@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Drawing;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Todo_App.Application.Common.Interfaces;
@@ -39,6 +40,7 @@ public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
             Id = list.Id,
             Title = list.Title,
             Colour = list.Colour,
+            ////renge bir bak 
             Items = list.Items.Select(item => new TodoItemDto
             {
                 Id = item.Id,

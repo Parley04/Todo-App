@@ -31,7 +31,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-sm-8" [ngStyle]="{ 'background-color': selectedList.colour }" style="padding-top: 20px;"
+    <div class="col-sm-8" [ngStyle]="{ 'background-color': selectedList.colour.code }" style="padding-top: 20px;"
       *ngIf="selectedList">
       <div class="clearfix">
         <div class="row">
@@ -194,8 +194,8 @@
     </div>
     <div class="form-group">
       <label for="priority">Background Colour</label>
-      <select class="form-control" id="inputColour" [(ngModel)]="listOptionsEditor.colour" name="colour">
-        <option [ngValue]="colour.value" *ngFor="let colour of colours">{{ colour.name }}</option>
+      <select class="form-control" id="inputColour"  name="colour" [(ngModel)]="tempColour">
+        <option [ngValue]="colour.name" *ngFor="let colour of colours">{{ colour.name }}</option>
       </select>
 
     </div>

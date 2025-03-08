@@ -1,5 +1,6 @@
 ﻿using Todo_App.Application.Common.Mappings;
 using Todo_App.Domain.Entities;
+using Todo_App.Domain.ValueObjects;
 
 namespace Todo_App.Application.TodoLists.Queries.GetTodos;
 
@@ -14,7 +15,7 @@ public class TodoListDto : IMapFrom<TodoList>
 
     public string? Title { get; set; }
 
-    public string? Colour { get; set; }
+    public Colour Colour { get; set; } = Colour.White;
 
 
     public IList<TodoItemDto>? Items { get;  set; } = new List<TodoItemDto>();

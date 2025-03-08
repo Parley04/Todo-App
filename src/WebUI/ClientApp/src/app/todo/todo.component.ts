@@ -50,14 +50,14 @@ export class TodoComponent implements OnInit {
   });
 
   colours: ColourDto[] = [
-    { value: "FFFFFF", name: "White" },
-    { value: "FF5733", name: "Red" },
-    { value: "FFC300", name: "Orange" },
-    { value: "FFFF66", name: "Yellow" },
-    { value: "CCFF99", name: "Green" },
-    { value: "6666FF", name: "Blue" },
-    { value: "9966CC", name: "Purple" },
-    { value: "999999", name: "Grey" },
+    { value: "#FFFFFF", name: "White" },
+    { value: "#FF5733", name: "Red" },
+    { value: "#FFC300", name: "Orange" },
+    { value: "#FFFF66", name: "Yellow" },
+    { value: "#CCFF99", name: "Green" },
+    { value: "#6666FF", name: "Blue" },
+    { value: "#9966CC", name: "Purple" },
+    { value: "#999999", name: "Grey" },
   ]
 
   constructor(
@@ -171,7 +171,7 @@ export class TodoComponent implements OnInit {
       }
     );
   }
-
+  tempColour:any;
   showListOptionsModal(template: TemplateRef<any>) {
     this.listOptionsEditor = {
       id: this.selectedList.id,
@@ -179,21 +179,20 @@ export class TodoComponent implements OnInit {
       colour: this.selectedList.colour
     };
 
+    this.tempColour=this.selectedList.colour.code;
+    console.log(this.tempColour);
     this.listOptionsModalRef = this.modalService.show(template);
   }
-
+  todoList:TodoListDto=new TodoListDto();
   updateListOptions() {
-    
     const list = this.listOptionsEditor as UpdateTodoListCommand;
-    // if (list.colour) {
-    //   list.colour = Colour.fromJS({ code: list.colour }).toJSON();
-    // }
-    console.log(list);
+    list.colour=this.tempColour;
     this.listsClient.update(this.selectedList.id, list).subscribe(
       () => {
         (this.selectedList.title = this.listOptionsEditor.title),
           this.listOptionsModalRef.hide();
         this.listOptionsEditor = {};
+        this.getAll();
       },
       error => console.error(error)
     );

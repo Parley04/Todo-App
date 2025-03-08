@@ -1144,8 +1144,7 @@
             "nullable": true
           },
           "colour": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/Colour"
           },
           "items": {
             "type": "array",
@@ -1262,12 +1261,8 @@
             "nullable": true
           },
           "colour": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Colour"
-              }
-            ]
+            "type": "string",
+            "nullable": true
           }
         }
       },
