@@ -10,6 +10,7 @@ public record UpdateTodoListCommand : IRequest
 {
     public int Id { get; init; }
     public string? Title { get; init; }
+    public string UserId{ get; init; }
     public string? Colour { get; set; }
 }
 
@@ -33,6 +34,7 @@ public class UpdateTodoListCommandHandler : IRequestHandler<UpdateTodoListComman
         }
 
         entity.Title = request.Title;
+        entity.UserId = request.UserId;
 
         if (!string.IsNullOrEmpty(request.Colour))
         {

@@ -115,6 +115,49 @@
         }
       }
     },
+    "/api/ItemTags/{itemId}/{tagId}": {
+      "delete": {
+        "tags": [
+          "ItemTags"
+        ],
+        "operationId": "ItemTags_Delete2",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Tags/{userId}/{todoItemId}": {
       "get": {
         "tags": [
@@ -1005,7 +1048,15 @@
                 "nullable": true
               },
               "colour": {
-                "$ref": "#/components/schemas/Colour"
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Colour"
+                  }
+                ]
+              },
+              "userId": {
+                "type": "string"
               },
               "isActive": {
                 "type": "boolean"
@@ -1143,8 +1194,16 @@
             "type": "string",
             "nullable": true
           },
+          "userId": {
+            "type": "string"
+          },
           "colour": {
-            "$ref": "#/components/schemas/Colour"
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Colour"
+              }
+            ]
           },
           "items": {
             "type": "array",
@@ -1175,8 +1234,7 @@
             "type": "boolean"
           },
           "priority": {
-            "type": "integer",
-            "format": "int32"
+            "$ref": "#/components/schemas/PriorityLevel"
           },
           "note": {
             "type": "string",
@@ -1245,6 +1303,9 @@
           "title": {
             "type": "string",
             "nullable": true
+          },
+          "userId": {
+            "type": "string"
           }
         }
       },
@@ -1259,6 +1320,9 @@
           "title": {
             "type": "string",
             "nullable": true
+          },
+          "userId": {
+            "type": "string"
           },
           "colour": {
             "type": "string",

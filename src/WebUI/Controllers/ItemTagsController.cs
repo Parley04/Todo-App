@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Todo_App.Application.ItemTags.Command.Create.CreateItemTag;
 using Todo_App.Application.ItemTags.Command.Delete.DeleteItemTag;
+using Todo_App.Application.ItemTags.Command.Delete.DeleteItemTagWithIds;
 using Todo_App.Application.ItemTags.Command.Update.UpdateItemTag;
 using Todo_App.Application.Tags.Command.Delete.DeleteTag;
 
@@ -38,6 +39,13 @@ public class ItemTagsController : ApiControllerBase
     public async Task<ActionResult> Delete(int id)
     {
         await Mediator.Send(new DeleteItemTagCommand(id));
+
+        return NoContent();
+    }
+    [HttpDelete("{itemId}/{tagId}")]
+    public async Task<ActionResult> Delete(int itemId, int tagId)
+    {
+        await Mediator.Send(new DeleteItemTagWithIdsCommand(itemId, tagId));
 
         return NoContent();
     }

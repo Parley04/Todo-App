@@ -19,6 +19,7 @@ export interface IItemTagsClient {
     create(command: CreateItemTagCommand): Observable<number>;
     update(id: number, command: UpdateItemTagCommand): Observable<FileResponse>;
     delete(id: number): Observable<FileResponse>;
+    delete2(itemId: number, tagId: number): Observable<FileResponse>;
 }
 
 @Injectable({
@@ -170,6 +171,58 @@ export class ItemTagsClient implements IItemTagsClient {
     }
 
     protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    delete2(itemId: number, tagId: number): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/ItemTags/{itemId}/{tagId}";
+        if (itemId === undefined || itemId === null)
+            throw new Error("The parameter 'itemId' must be defined.");
+        url_ = url_.replace("{itemId}", encodeURIComponent("" + itemId));
+        if (tagId === undefined || tagId === null)
+            throw new Error("The parameter 'tagId' must be defined.");
+        url_ = url_.replace("{tagId}", encodeURIComponent("" + tagId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete2(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete2(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse>;
+        }));
+    }
+
+    protected processDelete2(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1679,7 +1732,8 @@ export enum PriorityLevel {
 
 export class TodoList extends BaseAuditableEntity implements ITodoList {
     title?: string | undefined;
-    colour?: Colour;
+    colour?: Colour | undefined;
+    userId?: string;
     isActive?: boolean;
     items?: TodoItem[];
 
@@ -1692,6 +1746,7 @@ export class TodoList extends BaseAuditableEntity implements ITodoList {
         if (_data) {
             this.title = _data["title"];
             this.colour = _data["colour"] ? Colour.fromJS(_data["colour"]) : <any>undefined;
+            this.userId = _data["userId"];
             this.isActive = _data["isActive"];
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
@@ -1712,6 +1767,7 @@ export class TodoList extends BaseAuditableEntity implements ITodoList {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
         data["colour"] = this.colour ? this.colour.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
         data["isActive"] = this.isActive;
         if (Array.isArray(this.items)) {
             data["items"] = [];
@@ -1725,7 +1781,8 @@ export class TodoList extends BaseAuditableEntity implements ITodoList {
 
 export interface ITodoList extends IBaseAuditableEntity {
     title?: string | undefined;
-    colour?: Colour;
+    colour?: Colour | undefined;
+    userId?: string;
     isActive?: boolean;
     items?: TodoItem[];
 }
@@ -2034,7 +2091,8 @@ export interface IPriorityLevelDto {
 export class TodoListDto implements ITodoListDto {
     id?: number;
     title?: string | undefined;
-    colour?: Colour;
+    userId?: string;
+    colour?: Colour | undefined;
     items?: TodoItemDto[] | undefined;
 
     constructor(data?: ITodoListDto) {
@@ -2050,6 +2108,7 @@ export class TodoListDto implements ITodoListDto {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
+            this.userId = _data["userId"];
             this.colour = _data["colour"] ? Colour.fromJS(_data["colour"]) : <any>undefined;
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
@@ -2070,6 +2129,7 @@ export class TodoListDto implements ITodoListDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
+        data["userId"] = this.userId;
         data["colour"] = this.colour ? this.colour.toJSON() : <any>undefined;
         if (Array.isArray(this.items)) {
             data["items"] = [];
@@ -2083,7 +2143,8 @@ export class TodoListDto implements ITodoListDto {
 export interface ITodoListDto {
     id?: number;
     title?: string | undefined;
-    colour?: Colour;
+    userId?: string;
+    colour?: Colour | undefined;
     items?: TodoItemDto[] | undefined;
 }
 
@@ -2092,7 +2153,7 @@ export class TodoItemDto implements ITodoItemDto {
     listId?: number;
     title?: string | undefined;
     done?: boolean;
-    priority?: number;
+    priority?: PriorityLevel;
     note?: string | undefined;
     itemTags?: ItemTagDto[] | undefined;
 
@@ -2150,7 +2211,7 @@ export interface ITodoItemDto {
     listId?: number;
     title?: string | undefined;
     done?: boolean;
-    priority?: number;
+    priority?: PriorityLevel;
     note?: string | undefined;
     itemTags?: ItemTagDto[] | undefined;
 }
@@ -2261,6 +2322,7 @@ export interface ITagDto {
 
 export class CreateTodoListCommand implements ICreateTodoListCommand {
     title?: string | undefined;
+    userId?: string;
 
     constructor(data?: ICreateTodoListCommand) {
         if (data) {
@@ -2274,6 +2336,7 @@ export class CreateTodoListCommand implements ICreateTodoListCommand {
     init(_data?: any) {
         if (_data) {
             this.title = _data["title"];
+            this.userId = _data["userId"];
         }
     }
 
@@ -2287,17 +2350,20 @@ export class CreateTodoListCommand implements ICreateTodoListCommand {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
+        data["userId"] = this.userId;
         return data;
     }
 }
 
 export interface ICreateTodoListCommand {
     title?: string | undefined;
+    userId?: string;
 }
 
 export class UpdateTodoListCommand implements IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+    userId?: string;
     colour?: string | undefined;
 
     constructor(data?: IUpdateTodoListCommand) {
@@ -2313,6 +2379,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
+            this.userId = _data["userId"];
             this.colour = _data["colour"];
         }
     }
@@ -2328,6 +2395,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
+        data["userId"] = this.userId;
         data["colour"] = this.colour;
         return data;
     }
@@ -2336,6 +2404,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
 export interface IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+    userId?: string;
     colour?: string | undefined;
 }
 

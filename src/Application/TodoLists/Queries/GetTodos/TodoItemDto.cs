@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Todo_App.Application.Common.Mappings;
 using Todo_App.Domain.Entities;
+using Todo_App.Domain.Enums;
 
 namespace Todo_App.Application.TodoLists.Queries.GetTodos;
 
@@ -18,7 +19,7 @@ public class TodoItemDto : IMapFrom<TodoItem>
 
     public bool Done { get; set; }
 
-    public int Priority { get; set; }
+    public PriorityLevel Priority { get; set; }
 
     public string? Note { get; set; }
 

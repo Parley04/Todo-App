@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Todo_App.Application.Common.Interfaces;
@@ -40,7 +39,7 @@ public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
             Id = list.Id,
             Title = list.Title,
             Colour = list.Colour,
-            ////renge bir bak 
+            UserId = list.UserId,
             Items = list.Items.Select(item => new TodoItemDto
             {
                 Id = item.Id,
@@ -48,7 +47,7 @@ public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>
                 ListId=item.ListId,
                 Done = item.Done,
                 Note = item.Note,
-                Priority = (int)item.Priority,
+                Priority = item.Priority,
                 ItemTags = item.ItemTags.Where(it => it.Tag != null 
                 && it.Tag.UserId == request.UserId 
                 && it.IsActive 

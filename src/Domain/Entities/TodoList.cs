@@ -6,8 +6,8 @@ public class TodoList : BaseAuditableEntity
 {
     public string? Title { get; set; }
 
-    public Colour Colour { get; set; } = Colour.White;
-
+    public Colour? Colour { get; set; } = Colour.White;
+    public string UserId{ get; set; }
     public bool IsActive { get; set; } = true;
     public IList<TodoItem> Items { get; private set; } = new List<TodoItem>();
 }

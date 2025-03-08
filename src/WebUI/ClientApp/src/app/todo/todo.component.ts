@@ -83,13 +83,14 @@ export class TodoComponent implements OnInit {
   filterTextList: string = "";
   selectedItemTagId: number;
   isMyTag: boolean = true;
+  tempColour:any;
+  todoItem:TodoItem=new TodoItem();
 
   ngOnInit(): void {
     this.authService.getUser().subscribe((res: any) => {
       this.userId = res.sub;
       console.log(this.userId);
       this.getAll();
-
     })
   }
 
@@ -101,7 +102,6 @@ export class TodoComponent implements OnInit {
         if (this.lists.length) {
           this.selectedList = this.lists[0];
         }
-        console.log(result)
       },
       error => console.error(error)
     );
@@ -149,20 +149,22 @@ export class TodoComponent implements OnInit {
     const list = {
       id: 0,
       title: this.newListEditor.title,
+      userId: this.userId,
+      colour:{},
       items: []
     } as TodoListDto;
-
     this.listsClient.create(list as CreateTodoListCommand).subscribe(
       result => {
         list.id = result;
         this.lists.push(list);
         this.selectedList = list;
+        this.tempColour=this.colours[0];
         this.newListModalRef.hide();
         this.newListEditor = {};
       },
+
       error => {
         const errors = JSON.parse(error.response);
-
         if (errors && errors.Title) {
           this.newListEditor.error = errors.Title[0];
         }
@@ -171,7 +173,6 @@ export class TodoComponent implements OnInit {
       }
     );
   }
-  tempColour:any;
   showListOptionsModal(template: TemplateRef<any>) {
     this.listOptionsEditor = {
       id: this.selectedList.id,
@@ -187,6 +188,7 @@ export class TodoComponent implements OnInit {
   updateListOptions() {
     const list = this.listOptionsEditor as UpdateTodoListCommand;
     list.colour=this.tempColour;
+    list.userId=this.userId;
     this.listsClient.update(this.selectedList.id, list).subscribe(
       () => {
         (this.selectedList.title = this.listOptionsEditor.title),
@@ -214,7 +216,6 @@ export class TodoComponent implements OnInit {
     );
   }
 
-  todoItem:TodoItem=new TodoItem();
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
     this.getUnchosenTagList(item);
 
@@ -240,24 +241,20 @@ export class TodoComponent implements OnInit {
     const item = new UpdateTodoItemDetailCommand({
       id: this.selectedItem.id,
       listId: this.selectedItem.listId,
-      priority: this.selectedItem.priority,
+      priority: Number(this.selectedItem.priority),
       note: this.selectedItem.note
     });
-
     this.itemsClient.updateItemDetails(this.selectedItem.id, item).subscribe(
       () => {
-        // Eğer liste değiştiyse, item'ı eski listeden çıkar, yeni listeye ekle
         if (this.selectedItem.listId !== item.listId) {
           this.selectedList.items = this.selectedList.items.filter(i => i.id !== this.selectedItem.id);
           const listIndex = this.lists.findIndex(l => l.id === item.listId);
           this.selectedItem.listId = item.listId;
           this.lists[listIndex].items.push(this.selectedItem);
         }
-        // Yeni değerleri ata
         this.selectedItem.priority = item.priority;
         this.selectedItem.note = item.note;
         this.getAll();
-        // Modal'ı kapat
         this.itemDetailsModalRef.hide();
       },
       error => console.error(error)
@@ -370,7 +367,13 @@ export class TodoComponent implements OnInit {
     console.log(this.chosenItemTag)
   }
 
-  deleteItemTag(template: TemplateRef<any>) {
+  deleteItemTagWithIds(itemId:number, tagId:number){
+    this.itemTagClient.delete2(itemId, tagId).subscribe((res: any) => {
+      this.tagListModalRef.hide();
+      this.getAll();
+    })
+  }
+  deleteItemTag() {
     this.itemTagClient.delete(this.chosenItemTag.id).subscribe((res: any) => {
       this.itemTagOptionsModalRef.hide();
       this.getAll();
