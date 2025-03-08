@@ -89,16 +89,22 @@ export class TodoComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getUser().subscribe((res: any) => {
       this.userId = res.sub;
-      console.log(this.userId);
       this.getAll();
     })
   }
-
   getAll() {
     this.listsClient.getList(this.userId).subscribe(
       result => {
         this.lists = result.lists;
+  
+        // Her list öğesi için renk adını atamak
+        // this.lists.forEach(list => {
+        //   list.colour.code = this.getColourName(list.colour.code);
+        // });
+  
+        console.log(this.lists);  // Artık her liste öğesinde colourName özelliği var
         this.priorityLevels = result.priorityLevels;
+  
         if (this.lists.length) {
           this.selectedList = this.lists[0];
         }
@@ -106,6 +112,12 @@ export class TodoComponent implements OnInit {
       error => console.error(error)
     );
   }
+  
+  getColourName(colourCode: string): string {
+    const colour = this.colours.find(c => c.value === colourCode);
+    return colour ? colour.name : "Unknown";  // Eşleşme varsa renk adı, yoksa "Unknown"
+  }
+  
   openTagList(template: TemplateRef<any>, todoItemId: number) {
     this.selectedItemTagId = todoItemId;
 
@@ -117,8 +129,6 @@ export class TodoComponent implements OnInit {
       this.isMyTag = true;
     })
   }
-
-
 
 
 
@@ -162,7 +172,6 @@ export class TodoComponent implements OnInit {
         this.newListModalRef.hide();
         this.newListEditor = {};
       },
-
       error => {
         const errors = JSON.parse(error.response);
         if (errors && errors.Title) {
@@ -179,9 +188,7 @@ export class TodoComponent implements OnInit {
       title: this.selectedList.title,
       colour: this.selectedList.colour
     };
-
-    this.tempColour=this.selectedList.colour.code;
-    console.log(this.tempColour);
+    this.tempColour=this.getColourName(this.selectedList.colour.code);
     this.listOptionsModalRef = this.modalService.show(template);
   }
   todoList:TodoListDto=new TodoListDto();
@@ -189,6 +196,7 @@ export class TodoComponent implements OnInit {
     const list = this.listOptionsEditor as UpdateTodoListCommand;
     list.colour=this.tempColour;
     list.userId=this.userId;
+    console.log(list);
     this.listsClient.update(this.selectedList.id, list).subscribe(
       () => {
         (this.selectedList.title = this.listOptionsEditor.title),
@@ -266,7 +274,6 @@ export class TodoComponent implements OnInit {
     this.tag.userId = this.userId;
     this.tag.countUses = 0;
     this.tagsClient.create(this.tag).subscribe((res: any) => {
-      console.log(res)
       this.saveItemTag(res);
     })
   }
@@ -300,7 +307,7 @@ export class TodoComponent implements OnInit {
     if (query) {
       this.displayedMyTags = this.myTags.filter(tag => tag.name.toLowerCase().includes(query));
     } else {
-      this.displayedMyTags = [...this.myTags]; // Reset to show all tags when the input is empty
+      this.displayedMyTags = [...this.myTags];
     }
   }
   addItem() {
@@ -318,14 +325,14 @@ export class TodoComponent implements OnInit {
   }
 
   editItem(item: any, elementId: string): void {
-    this.selectedItem = item; // Önce seçili öğeyi güncelle
+    this.selectedItem = item; 
   
     setTimeout(() => {
       const inputElement = document.getElementById(elementId) as HTMLInputElement;
       if (inputElement) {
-        inputElement.focus(); // Eğer element bulunduysa focus ver
+        inputElement.focus();
       }
-    }, 0); // Bir sonraki event loop'ta çalışmasını sağla
+    }, 0); 
   }
   
   updateItem(item: TodoItemDto, pressedEnter: boolean = false): void {
@@ -335,7 +342,6 @@ export class TodoComponent implements OnInit {
       this.deleteItem(item);
       return;
     }
-    console.log(item)
     if (item.id === 0) {
       this.itemsClient
         .create({
@@ -364,7 +370,6 @@ export class TodoComponent implements OnInit {
   choseItemTag(template: TemplateRef<any>, itemTag: ItemTag) {
     this.itemTagOptionsModalRef = this.modalService.show(template);
     this.chosenItemTag = itemTag;
-    console.log(this.chosenItemTag)
   }
 
   deleteItemTagWithIds(itemId:number, tagId:number){

@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'counter', component: CounterComponent },
   { path: 'fetch-data', component: FetchDataComponent },
-  { path: 'todo', component: TodoComponent },
+  { path: 'todo', component: TodoComponent, canActivate: [AuthorizeGuard]  },
   { path: 'token', component: TokenComponent, canActivate: [AuthorizeGuard] }
 ];
 

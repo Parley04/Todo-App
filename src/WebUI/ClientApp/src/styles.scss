@@ -159,3 +159,108 @@ code {
   vertical-align: baseline;
 
 }
+
+
+
+
+#listOptions {
+  margin-right: 8px;
+}
+
+#todo-items .item-input-control {
+  border: 0;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+#todo-items .done-todo {
+  text-decoration: line-through;
+}
+
+#todo-items .todo-item-title {
+  padding-top: 8px;
+}
+
+#todo-items .list-group-item {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+#todo-items .list-group-item .btn-xs {
+  padding: 0;
+}
+
+#todo-items .todo-item-checkbox {
+  padding-top: 8px;
+}
+
+#todo-items .todo-item-commands {
+  padding-top: 4px;
+}
+
+.modal-footer {
+  display: block;
+}
+
+.tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; 
+  max-height: 200px; 
+  overflow-y: auto;
+}
+
+.tag-item {
+  flex: 1 1 30%; 
+  min-width: 100px; 
+}.tag-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tag-hover {
+  transition: opacity 0.3s ease-in-out;
+  cursor: pointer;
+  padding-right: 22px; 
+  position: relative;
+}
+
+.tag-hover-inpage{
+  transition: opacity 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+}
+.tag-hover:hover  {
+  opacity: 0.7;
+}
+.tag-hover-inpage:hover  {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.tag-remove {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  font-size: 12px;  
+  font-weight: bold;
+  color: #fff;
+  background: rgba(200, 0, 0, 0.8); 
+  border-radius: 50%;
+  width: 14px;  
+  height: 14px;
+  text-align: center;
+  line-height: 14px;
+  cursor: pointer;
+  display: none; 
+  transition: background 0.2s ease-in-out;
+}
+
+.tag-hover:hover .tag-remove {
+  display: inline-block;
+}
+
+.tag-remove:hover {
+  background: rgba(150, 0, 0, 0.9);
+}

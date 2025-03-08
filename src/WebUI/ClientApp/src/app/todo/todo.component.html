@@ -1,6 +1,6 @@
 <h1>Todo</h1>
 
-<p>This is a complex todo list component.</p>
+<p *ngIf="!lists">This is a complex todo list component.</p>
 
 <p *ngIf="!lists"><em>Loading...</em></p>
 
@@ -77,23 +77,17 @@
 
               <span *ngIf="item.itemTags?.length > 0">
                 <ng-container *ngFor="let tag of item.itemTags.slice(0, 2); let i = index">
-                  <span 
-                    [ngClass]="{
+                  <span class="tag-hover-inpage" [ngClass]="{
                       'pill-primary': item.priority === 0,
                       'pill-success': item.priority === 1,
                       'pill-warning': item.priority === 2,
                       'pill-danger': item.priority === 3
-                    }"
-                    style="cursor:pointer;"
-                    (click)="choseItemTag(deleteItemTagModalTemplate, tag)">
+                    }" style="cursor:pointer;" (click)="choseItemTag(deleteItemTagModalTemplate, tag)">
                     {{ tag?.tags?.[0]?.name }}
                   </span>
                 </ng-container>
-                <span 
-                  style="cursor: pointer;" 
-                  *ngIf="item.itemTags.length > 2"
-                  (click)="openTagList(tagListModalTemplate, item.id)" 
-                  [ngClass]="{
+                <span class="tag-hover-inpage"*ngIf="item.itemTags.length > 2"
+                  (click)="openTagList(tagListModalTemplate, item.id)" [ngClass]="{
                         'pill-primary': item.priority === 0,
                       'pill-success': item.priority === 1,
                       'pill-warning': item.priority === 2,
@@ -102,7 +96,7 @@
                   +{{ item.itemTags.length - 2 }} more
                 </span>
               </span>
-              
+
 
             </div>
             <div class="col-1">
@@ -180,13 +174,13 @@
       <br>
       <div class="tag-grid">
         <span *ngFor="let tag of displayedMyTags">
-        <div class="card-body tag-container">
-          <span class="pill-success tag-hover">
-            {{ tag.name }}
-            <span class="tag-remove" (click)="deleteItemTagWithIds(selectedItemTagId,tag.id)">×</span>
-          </span>
-        </div>
-      </span>
+          <div class="card-body tag-container">
+            <span class="pill-success tag-hover">
+              {{ tag.name }}
+              <span class="tag-remove" (click)="deleteItemTagWithIds(selectedItemTagId,tag.id)">×</span>
+            </span>
+          </div>
+        </span>
       </div>
     </div>
   </div>
@@ -215,7 +209,7 @@
     </div>
     <div class="form-group">
       <label for="priority">Background Colour</label>
-      <select class="form-control" id="inputColour"  name="colour" [(ngModel)]="tempColour">
+      <select class="form-control" id="inputColour" name="colour" [(ngModel)]="tempColour">
         <option [ngValue]="colour.name" *ngFor="let colour of colours">{{ colour.name }}</option>
       </select>
 
