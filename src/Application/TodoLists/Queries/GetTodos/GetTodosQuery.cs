@@ -9,7 +9,7 @@ namespace Todo_App.Application.TodoLists.Queries.GetTodos;
 
 public record GetTodosQuery : IRequest<TodosVm>
 {
-    public string UserId { get; init; }
+    public string UserId { get; init; } = string.Empty;
 }
 
 public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>

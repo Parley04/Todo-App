@@ -9,8 +9,8 @@ namespace Todo_App.Application.Tags.Command.Update.UpdateTag
     public class UpdateTagCommand : IRequest
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string UserId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
         public int CountUses { get; set; }
     }
 

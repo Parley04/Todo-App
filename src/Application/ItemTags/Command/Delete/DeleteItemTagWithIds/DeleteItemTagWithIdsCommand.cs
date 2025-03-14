@@ -26,10 +26,6 @@ namespace Todo_App.Application.ItemTags.Command.Delete.DeleteItemTagWithIds
             var entity = await _context.ItemTags.Where(x => x.IsActive && x.TodoItemId == request.itemId &&  x.TagId ==request.tagId)
                .FirstOrDefaultAsync(cancellationToken);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(ItemTag), entity.Id);
-            }
 
             var tag = await _context.Tags.Where(x => x.IsActive && x.Id == request.tagId)
              .FirstOrDefaultAsync(cancellationToken);

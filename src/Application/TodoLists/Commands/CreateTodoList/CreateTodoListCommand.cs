@@ -8,7 +8,7 @@ namespace Todo_App.Application.TodoLists.Commands.CreateTodoList;
 public record CreateTodoListCommand : IRequest<int>
 {
     public string? Title { get; init; }
-    public string UserId { get; init; }
+    public string UserId { get; init; } = string.Empty;
 }
 
 public class CreateTodoListCommandHandler : IRequestHandler<CreateTodoListCommand, int>

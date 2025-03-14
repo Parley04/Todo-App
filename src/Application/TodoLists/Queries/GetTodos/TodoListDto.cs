@@ -14,7 +14,7 @@ public class TodoListDto : IMapFrom<TodoList>
     public int Id { get; set; }
 
     public string? Title { get; set; }
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
 
     public Colour? Colour { get; set; } = Colour.White;
 

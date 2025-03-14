@@ -7,8 +7,8 @@ namespace Todo_App.Application.Tags.Command.CreateTag
 {
     public record CreateTagCommand : IRequest<int>
     {
-        public string Name { get; set; }
-        public string UserId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
         public int CountUses { get; set; }
         public bool IsActive { get; set; }
     }

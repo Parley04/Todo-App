@@ -10,7 +10,7 @@ public record UpdateTodoListCommand : IRequest
 {
     public int Id { get; init; }
     public string? Title { get; init; }
-    public string UserId{ get; init; }
+    public string UserId{ get; init; } = string.Empty;
     public string? Colour { get; set; }
 }
 

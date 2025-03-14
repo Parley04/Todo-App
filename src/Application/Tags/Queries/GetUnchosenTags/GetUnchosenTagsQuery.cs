@@ -8,7 +8,7 @@ namespace Todo_App.Application.Tags.Queries.GetUnchosenTags
 {
     public record GetUnchosenTagsQuery : IRequest<List<Tag>>
     {
-        public string UserId { get; init; }
+        public string UserId { get; init; } = string.Empty;
         public int TodoItemId { get; set; }
 
         public class GetUnchosenTagsQueryHandler : IRequestHandler<GetUnchosenTagsQuery, List<Tag>>

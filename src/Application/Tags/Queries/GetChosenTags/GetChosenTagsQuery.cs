@@ -9,7 +9,7 @@ namespace Todo_App.Application.Tags.Queries.GetChosenTags
 {
     public record GetChosenTagsQuery : IRequest<List<Tag>>
     {
-        public string UserId { get; init; }
+        public string UserId { get; init; } = string.Empty;
         public int TodoItemId { get; set; }
         public class GetChosenTagsQueryHandler : IRequestHandler<GetChosenTagsQuery, List<Tag>>
         {
